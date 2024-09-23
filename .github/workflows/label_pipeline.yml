@@ -1,0 +1,25 @@
+name: Trigger Label Pipeline
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  trigger_on_label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for the trigger label
+        id: check_label
+        run: |
+          echo "Checking labels for trigger..."
+          if [[ "${{ toJSON(github.event.pull_request.labels) }}" == *"trigger-pipeline"* ]]; then
+            echo "Trigger label found."
+          else
+            echo "No trigger label found. Exiting."
+            exit 1
+
+      - name: Run the pipeline
+        if: success()
+        run: |
+          echo "Pipeline triggered by label!"
+          # Add the commands for your pipeline steps here
