@@ -14,11 +14,13 @@ jobs:
           echo "Checking labels for trigger..."
           labels=$(echo '${{ toJSON(github.event.pull_request.labels) }}' | jq -r '.[].name')
           echo "Labels: $labels"
+          
           if echo "$labels" | grep -q "trigger-pipeline"; then
             echo "Trigger label found."
           else
             echo "No trigger label found. Exiting."
             exit 1
+          fi
 
       - name: Run the pipeline
         if: success()
