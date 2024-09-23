@@ -22,8 +22,21 @@ jobs:
             exit 1
           fi
 
-      - name: Run the pipeline
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Build debug AAB
         if: success()
         run: |
-          echo "Pipeline triggered by label!"
-          # Add your pipeline steps here
+          echo "Building the debug Android App Bundle..."
+          ./gradlew bundleDebug
+
+      - name: Upload debug AAB artifact
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-aab
+          path: app/build/outputs/bundle/debug/app-debug.aab
