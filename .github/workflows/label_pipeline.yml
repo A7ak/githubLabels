@@ -32,7 +32,7 @@ jobs:
         if: success()
         run: |
           echo "Building the debug Android App Bundle..."
-          ./gradlew bundleDebug
+          ./gradlew bundleRelease
 
       - name: Upload debug AAB artifact
         if: success()
