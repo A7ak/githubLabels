@@ -1,0 +1,23 @@
+name: Trigger Label Pipeline
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  trigger_on_label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for the trigger label
+        id: check_label
+        run: |
+          echo "Checking labels for trigger..."
+          labels=$(echo '${{ toJSON(github.event.pull_request.labels) }}' | jq -r '.[].name')
+          echo "Labels: $labels"
+          
+          if echo "$labels" | grep -q "trigger-azure"; then
+            echo "Trigger label found."
+          else
+            echo "No trigger label found. Exiting."
+            exit 1
+          fi
