@@ -1,15 +1,21 @@
-# Android
-# Build your Android project with Gradle.
-# Add steps that test, sign, and distribute the APK, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/android
-
 trigger:
   - a7/azure-pipeline
 
 pool:
   vmImage: 'macos-latest'
 
+variables:
+  System.Debug: true  # Enable verbose logging for troubleshooting
+
 steps:
+  # Step to check out the code from the repository
+  - checkout: self
+    clean: true
+    fetchDepth: 1
+    lfs: false
+    fetchTags: true
+
+  # Step to build the Android project using Gradle
   - task: Gradle@2
     inputs:
       workingDirectory: ''
@@ -19,6 +25,7 @@ steps:
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'assembleDebug'
 
+  # Step to print a success message
   - script: |
       echo "Build completed successfully!"
     displayName: 'Print Success Message'
