@@ -2,30 +2,31 @@ trigger:
   - a7/azure-pipeline
 
 pool:
-  vmImage: 'macos-latest'
-
-variables:
-  System.Debug: true  # Enable verbose logging for troubleshooting
+  vmImage: 'macOS-latest'
 
 steps:
-  # Step to check out the code from the repository
-  - checkout: self
-    clean: true
-    fetchDepth: 1
-    lfs: false
-    fetchTags: true
-
-  # Step to build the Android project using Gradle
   - task: Gradle@2
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
-      publishJUnitResults: false
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.8'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: true
       testResultsFiles: '**/TEST-*.xml'
-      tasks: 'assembleDebug'
+      tasks: 'assembleDebug test'
+    displayName: gradlew assembleDebug test
 
-  # Step to print a success message
-  - script: |
-      echo "Build completed successfully!"
-    displayName: 'Print Success Message'
+  - task: CopyFiles@2
+    inputs:
+      contents: '**/*.apk'
+      targetFolder: '$(build.artifactStagingDirectory)'
+    displayName: Copy .apk files to artifact staging directory
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(build.artifactStagingDirectory)'
+      artifactName: 'drop'
+      artifactType: 'container'
+    displayName: Publish artifacts
