@@ -2,12 +2,13 @@ trigger:
   - a7/azure-pipeline
 
 pool:
-  vmImage: 'macOS-latest'
+  name: 'Default'  
 
 steps:
   - script: echo Hello, world!
     displayName: 'Run a one-line script'
-  - script:
+  
+  - script: |
       echo Add other tasks to build, test, and deploy your project.
       echo See https://aka.ms/yaml
     displayName: 'Run a multi-line script'
